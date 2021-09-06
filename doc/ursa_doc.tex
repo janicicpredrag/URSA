@@ -1,0 +1,101 @@
+\documentclass[a4paper]{article}
+\usepackage{fullpage}
+\usepackage{url}
+
+\begin{document}
+
+\title{URSA: Language Description}
+\author{Predrag Jani\v{c}i\'c, Faculty of Mathematics, Studentski trg 16, 11000 Belgrade, Serbia}
+\date{}
+\maketitle
+
+{\scriptsize\ttfamily
+\begin{center}
+\begin{tabular}{lcl}
+$\langle$program$\rangle$ & ::= & $\langle$procedure def$\rangle$* $\langle$statement$\rangle$*                                               \\ \hline
+
+$\langle$procedure def$\rangle$ & ::= & "procedure" $\langle$procedure name$\rangle$ ( "(" ")" |                                              \\
+                                &     & \verb| | "(" ($\langle$num var id$\rangle$ \verb_|_ $\langle$bool var id$\rangle$) ("," ($\langle$num var id$\rangle$ \verb_|_ $\langle$bool var id$\rangle$))* ")" ) \\
+                                &     & \verb| | "\{" $\langle$statement$\rangle$* "\}"                                                       \\ \hline
+
+$\langle$procedure name$\rangle$       & ::= & $\langle$letter$\rangle$($\langle$letter$\rangle$ \verb_|_ $\langle$digit$\rangle$)*           \\ \hline
+
+$\langle$statement$\rangle$ & ::= & "\{" $\langle$statement$\rangle$* "\}"                                                                    \\
+            &     & \verb_|_ $\langle$num var$\rangle$ $\langle$assign num op$\rangle$ $\langle$num expr$\rangle$ ";"                         \\
+            &     & \verb_|_ $\langle$num var$\rangle$ $\langle$num op postfix$\rangle$ ";"                                                   \\
+            &     & \verb_|_ $\langle$bool var$\rangle$ $\langle$assign bool op$\rangle$ $\langle$bool expr$\rangle$ ";"                      \\
+            &     & \verb_|_ "while" "(" $\langle$bool expr$\rangle$ ")" $\langle$statement$\rangle$                                          \\
+            &     & \verb_|_ "for" "(" $\langle$statement$\rangle$ ";" $\langle$bool expr$\rangle$ ";" $\langle$statement$\rangle$ ")" $\langle$statement$\rangle$            \\
+            &     & \verb_|_ "if" "(" $\langle$bool expr$\rangle$ ")" $\langle$statement$\rangle$ [ "else" $\langle$statement$\rangle$ ]      \\
+            &     & \verb_|_ "call" $\langle$procedure name$\rangle$ ( "(" ")" |                                                              \\
+            &     & \verb_ _ \verb| |  "(" ($\langle$num expr$\rangle$ \verb_|_ $\langle$bool expr$\rangle$) ("," ($\langle$num expr$\rangle$ \verb_|_ $\langle$bool expr$\rangle$))* ")" ) ";"  \\
+            &     & \verb_|_ "minimize" "(" $\langle$num var$\rangle$ "," $\langle$num const$\rangle$ "," $\langle$num const$\rangle$ ")" ";" \\
+            &     & \verb_|_ "maximize" "(" $\langle$num var$\rangle$ "," $\langle$num const$\rangle$ "," $\langle$num const$\rangle$ ")" ";" \\
+            &     & \verb_|_ "assert" "(" $\langle$bool expr$\rangle$ (";" $\langle$bool expr$\rangle$)* ")" ";"                              \\
+            &     & \verb_|_ "assert\_all" "(" $\langle$bool expr$\rangle$ (";" $\langle$bool expr$\rangle$)* ")" ";"                         \\
+            &     & \verb_|_ "print" ($\langle$num expr$\rangle$ \verb_|_ $\langle$bool expr$\rangle$) ";"                                    \\
+            &     & \verb_|_ "printx" $\langle$num expr$\rangle$ ";"                                                                          \\
+            &     & \verb_|_ "printb" $\langle$num expr$\rangle$ ";"                                                                          \\
+            &     & \verb_|_ "listvars" ";"                                                                                                   \\
+            &     & \verb_|_ "clear" ";"                                                                                                      \\
+            &     & \verb_|_ "halt" ";"                                                                                                       \\ \hline
+
+$\langle$num expr$\rangle$ & ::= & $\langle$num const$\rangle$                                                                                \\
+             &     &     \verb_|_ $\langle$num var$\rangle$                                                                                   \\
+             &     &     \verb_|_ $\langle$un num op$\rangle$ $\langle$num expr$\rangle$                                                      \\
+             &     &     \verb_|_ $\langle$num expr$\rangle$ $\langle$num op$\rangle$ $\langle$num expr$\rangle$                              \\
+             &     &     \verb_|_ ite "(" $\langle$bool expr$\rangle$ "," $\langle$num expr$\rangle$ "," $\langle$num expr$\rangle$")"        \\
+             &     &     \verb_|_ "sgn" "(" $\langle$num expr$\rangle$ ")"                                                                    \\
+             &     &     \verb_|_ "bool2num" "(" $\langle$bool expr$\rangle$ ")"                                                              \\
+             &     &     \verb_|_ "(" $\langle$num expr$\rangle$ ")"                                                                          \\ \hline
+
+$\langle$num var$\rangle$ & ::= & $\langle$num var id$\rangle$                                                                                \\
+             &     &     \verb_|_ $\langle$num var id$\rangle$ "[" $\langle$num expr$\rangle$ "]"                                             \\
+             &     &     \verb_|_ $\langle$num var id$\rangle$ "[" $\langle$num expr$\rangle$ "]" "[" $\langle$num expr$\rangle$ "]"          \\ \hline
+
+$\langle$num const$\rangle$ & ::= & ($\langle$digit$\rangle$)+                                                                                \\ \hline
+
+$\langle$num var id$\rangle$ & ::= & "n"($\langle$letter$\rangle$ \verb_|_ $\langle$digit$\rangle$)*                                          \\ \hline
+
+$\langle$assign num op$\rangle$   & ::= & "\verb|=|" \verb_|_ "\verb|+=|" \verb_|_ "\verb|-=|" \verb_|_ "\verb|*=|" \verb_|_ "\verb|&=|" \verb_|_ "\verb_|=_" \verb_|_ "\verb|^=|" \verb_|_ "\verb|<<=|" \verb_|_ "\verb|>>=|"    \\ \hline
+$\langle$num op$\rangle$          & ::= & "\verb|+|" \verb_|_ "\verb|-|" \verb_|_ "\verb|*|" \verb_|_ "\verb|&|" \verb_|_ "\verb_|_" \verb_|_ "\verb|^|" \verb_|_ "\verb|<<|" \verb_|_ "\verb|>>|"    \\ \hline
+$\langle$un num op$\rangle$       & ::= & "$-$" \verb_|_ "\verb|~|"                                                                           \\ \hline
+$\langle$num op postfix$\rangle$  & ::= & "\verb|++|" \verb_|_ "\verb|--|"                                                                    \\ \hline
+$\langle$num rel$\rangle$         & ::= & "\verb|<|" \verb_|_ "\verb|>|" \verb_|_ "\verb|<=|" \verb_|_ "\verb|>=|" \verb_|_ "\verb|==|" \verb_|_ "\verb|!=|" \\ \hline
+
+$\langle$bool expr$\rangle$ & ::= & $\langle$bool const$\rangle$                                                                              \\
+             &     & \verb_|_ $\langle$bool var$\rangle$                                                                                      \\
+             &     & \verb_|_ $\langle$bool expr$\rangle$ $\langle$bool op$\rangle$ $\langle$bool expr$\rangle$                               \\
+             &     & \verb_|_ $\langle$un bool op$\rangle$ $\langle$bool expr$\rangle$                                                        \\
+             &     & \verb_|_ $\langle$num expr$\rangle$ $\langle$num rel$\rangle$ $\langle$num expr$\rangle$                                 \\
+             &     & \verb_|_ ite "(" $\langle$bool expr$\rangle$ "," $\langle$bool expr$\rangle$ "," $\langle$bool expr$\rangle$")"          \\
+             &     & \verb_|_ "num2bool" "(" $\langle$num expr$\rangle$ ")"                                                                   \\
+             &     & \verb_|_ "(" $\langle$bool expr$\rangle$ ")"                                                                             \\ \hline
+
+$\langle$bool const$\rangle$ & ::= & ( "true" \verb_|_ "false" )                                                                              \\ \hline
+
+$\langle$bool var$\rangle$ & ::= & $\langle$bool var id$\rangle$                                                                              \\
+               &     &     \verb_|_ $\langle$bool var id$\rangle$ "[" $\langle$num expr$\rangle$ "]"                                          \\
+               &     &     \verb_|_ $\langle$bool var id$\rangle$ "[" $\langle$num expr$\rangle$ "]" "[" $\langle$num expr$\rangle$ "]"       \\ \hline
+
+$\langle$bool var id$\rangle$ & ::= & "b"($\langle$letter$\rangle$ \verb_|_ $\langle$digit$\rangle$)*                                         \\ \hline
+
+$\langle$assign bool op$\rangle$ & ::= & "\verb|=|" \verb_|_ "\verb|&&=|"  \verb_|_ "\verb_||=_" \verb_|_ "\verb|^^=|"                        \\ \hline
+$\langle$bool op$\rangle$        & ::= & "\verb|&&|"  \verb_|_ "\verb_||_" \verb_|_ "\verb|^^|"                                               \\ \hline
+$\langle$un bool op$\rangle$     & ::= & "\verb|!|"                                                                                           \\ \hline
+\end{tabular}
+\end{center}
+}
+
+Constants in URSA specification may contain constants written in decimal form (e.g., 26), 
+in hexadecimal form (e.g, 0x1A or 0x1a), or in binary form (e.g., 0b00011010).
+The command \verb|print| prints numbers in decimal form, unless the number of bits is
+bigger than the size of integers on the computer e.g., 32/64 -- then the numbers are
+printed in hexadecimal form. The command \verb|printx| prints numbers in hexadecimal 
+form, and the command command \verb|printb| prints numbers in binary form.
+Solutions of the constraints are printed in decimal form, unless the number of bits is
+bigger than the size of integers on the computer e.g., 32/64 -- then the solutions are
+printed in hexadecimal form.
+
+
+\end{document}
