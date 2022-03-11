@@ -103,7 +103,7 @@ b[A-Za-z0-9_]* {
 
 [ \t\n]+        ;       /* ignore whitespace */
 
-.               yyerror((char*)"Unknown character");
+               yyerror((char*)"Unknown character");
 %%
 int yywrap(void) {
     return 1;
